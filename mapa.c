@@ -41,6 +41,7 @@ struct Emprestimo emprestimos[QTD_MAXIMA_DE_REGISTROS];
 void inicializarLivros();
 void inicializarUsuarios();
 void inicializarEmprestimos();
+int menu();
 void testeLivros();
 void testeUsuarios();
 void testeEmprestimos();
@@ -50,6 +51,7 @@ int main()
     inicializarLivros();
     inicializarUsuarios();
     inicializarEmprestimos();
+    menu();
     system("pause");
     return 0;
 }
@@ -89,6 +91,59 @@ void inicializarEmprestimos()
         strcpy(emprestimos[i].status,"");
     }
 }
+
+int menu()
+{   
+    while (1)
+    {
+        int escolha = 0;
+        system("cls");
+        printf("===== Menu =====\n");
+        printf("1. Cadastrar Usuario\n");
+        printf("2. Cadastrar Livro\n");
+        printf("3. Registrar Emprestimo\n");
+        printf("4. Registrar Devolucao\n");
+        printf("5. Pesquisar Livro\n");
+        printf("6. Pesquisar Usuario\n");
+        printf("7. Listar Emprestimos\n");
+        printf("8. Sair\n");
+        printf("\nEscolha uma opcao: ");
+        scanf("%d", &escolha);
+
+        switch (escolha)
+        {
+        case 1 :
+            printf("voce escolheu 1\n");
+            break;
+        case 2 :
+            printf("voce escolheu 2\n");
+            break;
+        case 3 :
+            printf("voce escolheu 3\n");
+            break;
+        case 4 :
+            printf("voce escolheu 4\n");
+            break;
+        case 5 :
+            printf("voce escolheu 5\n");
+            break;
+        case 6 :
+            printf("voce escolheu 6\n");
+            break;
+        case 7 :
+            printf("voce escolheu 7\n");
+            break;
+        case 8 :
+            printf("voce escolheu 8\n");
+            return 0;
+        default:
+            printf("Valor Invalido\n");
+            break;
+        }
+        system("pause");
+    }
+}
+
 
 void testeLivros()
 {
