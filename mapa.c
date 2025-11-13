@@ -4,7 +4,8 @@
 
 #define QTD_MAXIMA_DE_REGISTROS 20
 
-struct Livro{
+struct Livro
+{
     int codigo;
     char titulo[50];
     char autor[80];
@@ -38,12 +39,14 @@ struct Usuario usuarios[QTD_MAXIMA_DE_REGISTROS];
 struct Emprestimo emprestimos[QTD_MAXIMA_DE_REGISTROS];
 
 void inicializarLivros();
-void testeLivros();
+void inicializarUsuarios();
+void testeUsuarios();
 
 int main()
 {
     inicializarLivros();
-    testeLivros();
+    inicializarUsuarios();
+    testeUsuarios();
     system("pause");
     return 0;
 }
@@ -60,9 +63,19 @@ void inicializarLivros(){
     }
 }
 
-void testeLivros(){
+void inicializarUsuarios(){
     for(int i = 0; i < QTD_MAXIMA_DE_REGISTROS; i++){
-        printf("livro %d\n", i + 1);
-        printf("codigo %d\n\n", livros[i].codigo);
+        usuarios[i].matricula = 0;
+        strcpy(usuarios[i].nome_completo, "");
+        strcpy(usuarios[i].curso, "");
+        strcpy(usuarios[i].telefone, "");
+        strcpy(usuarios[i].data_cadastro, "");
+    }
+}
+
+void testeUsuarios(){
+    for(int i = 0; i < QTD_MAXIMA_DE_REGISTROS; i++){
+        printf("usuario %d\n", i + 1);
+        printf("matricula %d\n\n", usuarios[i].matricula);
     }
 }
