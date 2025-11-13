@@ -2,7 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#define QTD_MAXIMA_DE_REGISTROS 20
+#define QTD_MAXIMA_DE_REGISTROS 5
 
 struct Livro
 {
@@ -40,18 +40,22 @@ struct Emprestimo emprestimos[QTD_MAXIMA_DE_REGISTROS];
 
 void inicializarLivros();
 void inicializarUsuarios();
+void inicializarEmprestimos();
+void testeLivros();
 void testeUsuarios();
+void testeEmprestimos();
 
 int main()
 {
     inicializarLivros();
     inicializarUsuarios();
-    testeUsuarios();
+    inicializarEmprestimos();
     system("pause");
     return 0;
 }
 
-void inicializarLivros(){
+void inicializarLivros()
+{
     for(int i = 0; i < QTD_MAXIMA_DE_REGISTROS; i++){
         livros[i].codigo = 0;
         strcpy(livros[i].titulo, "");
@@ -63,7 +67,8 @@ void inicializarLivros(){
     }
 }
 
-void inicializarUsuarios(){
+void inicializarUsuarios()
+{
     for(int i = 0; i < QTD_MAXIMA_DE_REGISTROS; i++){
         usuarios[i].matricula = 0;
         strcpy(usuarios[i].nome_completo, "");
@@ -73,9 +78,39 @@ void inicializarUsuarios(){
     }
 }
 
-void testeUsuarios(){
+void inicializarEmprestimos()
+{
+    for(int i = 0; i < QTD_MAXIMA_DE_REGISTROS; i++){
+        emprestimos[i].codigo = 0;
+        emprestimos[i].matricula_usuario = 0;
+        emprestimos[i].codigo_livro = 0;
+        strcpy(emprestimos[i].data_emprestimo,"");
+        strcpy(emprestimos[i].data_devolucao,"");
+        strcpy(emprestimos[i].status,"");
+    }
+}
+
+void testeLivros()
+{
+    for(int i = 0; i < QTD_MAXIMA_DE_REGISTROS; i++){
+        printf("livro %d\n", i + 1);
+        printf("codigo %d\n\n", livros[i].codigo);
+    }
+}
+
+void testeUsuarios()
+{
     for(int i = 0; i < QTD_MAXIMA_DE_REGISTROS; i++){
         printf("usuario %d\n", i + 1);
         printf("matricula %d\n\n", usuarios[i].matricula);
+    }
+}
+
+void testeEmprestimos()
+{
+    for(int i = 0; i < QTD_MAXIMA_DE_REGISTROS; i++){
+        printf("emprestimo %d\n", i + 1);
+        printf("matricula %d\n", emprestimos[i].codigo);
+        printf("teste %s\n", emprestimos[i].status);
     }
 }
