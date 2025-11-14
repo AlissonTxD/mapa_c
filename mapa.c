@@ -44,6 +44,7 @@ void inicializarEmprestimos();
 void menu();
 void cadastrarLivro();
 void validarEntradaInteira(char *entrada, int *var_final);
+void listarLivros();
 
 int main()
 {
@@ -116,29 +117,30 @@ void menu()
         switch (escolha)
         {
         case 1 :
-            printf("voce escolheu 1\n");
+            //Cadastrar Usuario
             break;
         case 2 :
-            printf("voce escolheu 2\n");
+            //Cadastrar Livro
             cadastrarLivro();
             break;
         case 3 :
-            printf("voce escolheu 3\n");
+            //Registrar Emprestimo
             break;
         case 4 :
-            printf("voce escolheu 4\n");
+            //Registrar Devolucao
             break;
         case 5 :
-            printf("voce escolheu 5\n");
+            //Pesquisar Livro
+            listarLivros();
             break;
         case 6 :
-            printf("voce escolheu 6\n");
+            //Pesquisar Usuario
             break;
         case 7 :
-            printf("voce escolheu 7\n");
+            //Listar Emprestimos
             break;
         case 8 :
-            printf("Saindo.....\n");
+            //Sair
             return;
         default:
             printf("Valor Invalido\n");
@@ -160,7 +162,8 @@ void validarEntradaInteira(char *entrada, int *var_final)
 void cadastrarLivro(){
     system("cls");
     int vazio = -1;
-    printf("===== Cadrastrando Livro =====\n bota as informacao do livro\n");
+    struct Livro livro_entrada;   
+    printf("===== Cadastrando Livro =====\n");
     for(int i = 0; i < QTD_MAXIMA_DE_REGISTROS; i++){
         if(livros[i].codigo == 0){
             vazio = i;
@@ -187,25 +190,50 @@ void cadastrarLivro(){
             }
         }
     }
-    livros[vazio].codigo = codigo;
+    livro_entrada.codigo = codigo;
     printf("Titulo do livro: ");
-    fgets(livros[vazio].titulo, sizeof(livros[vazio].titulo), stdin);
+    fgets(livro_entrada.titulo, sizeof(livro_entrada.titulo), stdin);
     printf("Autor do livro: ");
-    fgets(livros[vazio].autor, sizeof(livros[vazio].autor), stdin);
+    fgets(livro_entrada.autor, sizeof(livro_entrada.autor), stdin);
     printf("Editora do livro: ");
-    fgets(livros[vazio].editora, sizeof(livros[vazio].editora), stdin);
+    fgets(livro_entrada.editora, sizeof(livro_entrada.editora), stdin);
     int ano;
     printf("Ano de publicacao: ");
     fgets(entrada, sizeof(entrada), stdin);
     validarEntradaInteira(entrada, &ano);
-    livros[vazio].ano_de_publicao = ano;
+    if (ano <= 0){
+        printf("Ano invalido!\n");
+        return;
+    }
+    livro_entrada.ano_de_publicao = ano;
     int exemplares;
     printf("Quantidade de exemplares: ");
     fgets(entrada, sizeof(entrada), stdin);
     validarEntradaInteira(entrada, &exemplares);
-    livros[vazio].exemplares = exemplares;
+    if (exemplares <= 0){
+        printf("Quantidade invalida!\n");
+        return;
+    }
+    livro_entrada.exemplares = exemplares;
     printf("Status do livro: ");
-    fgets(livros[vazio].status, sizeof(livros[vazio].status), stdin);
+    fgets(livro_entrada.status, sizeof(livro_entrada.status), stdin);
+    livros[vazio] = livro_entrada;
     printf("Livro cadastrado com sucesso.\n");
 }
 
+void listarLivros(){
+    system("cls");
+    printf("===== Lista de Livros Cadastrados =====\n");
+    for(int i = 0; i < QTD_MAXIMA_DE_REGISTROS; i++){
+        if(livros[i].codigo != 0){
+            printf("Codigo: %d\n", livros[i].codigo);
+            printf("Titulo: %s", livros[i].titulo);
+            printf("Autor: %s", livros[i].autor);
+            printf("Editora: %s", livros[i].editora);
+            printf("Ano de Publicacao: %d\n", livros[i].ano_de_publicao);
+            printf("Exemplares: %d\n", livros[i].exemplares);
+            printf("Status: %s\n", livros[i].status);
+            printf("-------------------------------\n");
+        }
+    }
+}
