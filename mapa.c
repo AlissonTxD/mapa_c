@@ -20,8 +20,8 @@ struct Usuario
     int matricula;
     char nome_completo[100];
     char curso[50];
-    char telefone[15];
-    char data_cadastro[15];
+    char telefone[20];
+    char data_cadastro[20];
 };
 
 struct Emprestimo
@@ -29,8 +29,8 @@ struct Emprestimo
     int codigo;
     int matricula_usuario;
     int codigo_livro;
-    char data_emprestimo[15];
-    char data_devolucao[15];
+    char data_emprestimo[20];
+    char data_devolucao[20];
     char status[15];
 };
 
@@ -43,8 +43,10 @@ void inicializarUsuarios();
 void inicializarEmprestimos();
 void menu();
 void cadastrarLivro();
+void cadastrarUsuario();
 void validarEntradaInteira(char *entrada, int *var_final);
 void listarLivros();
+void listarUsuarios();
 
 int main()
 {
@@ -118,6 +120,7 @@ void menu()
         {
         case 1 :
             //Cadastrar Usuario
+            cadastrarUsuario();
             break;
         case 2 :
             //Cadastrar Livro
@@ -135,6 +138,7 @@ void menu()
             break;
         case 6 :
             //Pesquisar Usuario
+            listarUsuarios();
             break;
         case 7 :
             //Listar Emprestimos
@@ -233,6 +237,66 @@ void listarLivros(){
             printf("Ano de Publicacao: %d\n", livros[i].ano_de_publicao);
             printf("Exemplares: %d\n", livros[i].exemplares);
             printf("Status: %s\n", livros[i].status);
+            printf("-------------------------------\n");
+        }
+    }
+}
+
+void cadastrarUsuario(){
+    system("cls");
+    printf("===== Cadastrando Usuario =====\n");
+    int vazio = -1;
+    struct Usuario usuario_entrada;
+    for(int i = 0; i < QTD_MAXIMA_DE_REGISTROS; i++){
+        if(usuarios[i].matricula == 0){
+            vazio = i;
+            break;
+        }
+    }
+    if (vazio == -1){
+        printf("Limite de cadastro de usuarios atingido!\n");
+        return;
+    }
+    char entrada[50];
+    int matricula;
+    printf("Matricula do usuario: ");
+    fgets(entrada, sizeof(entrada), stdin);
+    validarEntradaInteira(entrada, &matricula);
+    if(matricula <= 0){
+        printf("Matricula invalida!\n");
+        return;
+    }else{
+        for(int i = 0; i < QTD_MAXIMA_DE_REGISTROS; i++){
+            if(usuarios[i].matricula == matricula){
+                printf("Matricula ja cadastrada!\n");
+                return;
+            }
+        }
+    }
+    usuario_entrada.matricula = matricula;
+    printf("Nome do usuario: ");
+    fgets(usuario_entrada.nome_completo, sizeof(usuario_entrada.nome_completo), stdin);
+    printf("Curso do usuario: ");
+    fgets(usuario_entrada.curso, sizeof(usuario_entrada.curso), stdin);
+    printf("Telefone do usuario: ");
+    fgets(usuario_entrada.telefone, sizeof(usuario_entrada.telefone), stdin);
+    printf("Data de cadastro (DD/MM/AAAA): ");
+    fgets(usuario_entrada.data_cadastro, sizeof(usuario_entrada.data_cadastro), stdin);
+    usuarios[vazio] = usuario_entrada;
+    printf("Usuario cadastrado com sucesso.\n");
+}
+
+void listarUsuarios(){
+    system("cls");
+    printf("(67) 99999-9999\n");
+    printf("===== Lista de Usuarios Cadastrados =====\n");
+    for(int i = 0; i < QTD_MAXIMA_DE_REGISTROS; i++){
+        if(usuarios[i].matricula != 0){
+            printf("Matricula: %d\n", usuarios[i].matricula);
+            printf("Nome Completo: %s", usuarios[i].nome_completo);
+            printf("Curso: %s", usuarios[i].curso);
+            printf("Telefone: %s", usuarios[i].telefone);
+            printf("Data de Cadastro: %s\n", usuarios[i].data_cadastro);
             printf("-------------------------------\n");
         }
     }
