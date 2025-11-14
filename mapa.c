@@ -41,10 +41,8 @@ struct Emprestimo emprestimos[QTD_MAXIMA_DE_REGISTROS];
 void inicializarLivros();
 void inicializarUsuarios();
 void inicializarEmprestimos();
-int menu();
-void testeLivros();
-void testeUsuarios();
-void testeEmprestimos();
+void menu();
+void cadastrarLivro();
 
 int main()
 {
@@ -92,13 +90,15 @@ void inicializarEmprestimos()
     }
 }
 
-int menu()
+void menu()
 {   
     while (1)
-    {
+    {   
+        char validador[50];
         int escolha = 0;
         system("cls");
-        printf("===== Menu =====\n");
+        printf("Sistema de Gerenciamento da Biblioteca\n");
+        printf("================ Menu ================\n");
         printf("1. Cadastrar Usuario\n");
         printf("2. Cadastrar Livro\n");
         printf("3. Registrar Emprestimo\n");
@@ -108,8 +108,12 @@ int menu()
         printf("7. Listar Emprestimos\n");
         printf("8. Sair\n");
         printf("\nEscolha uma opcao: ");
-        scanf("%d", &escolha);
-
+        //Validador de entrada
+        fgets(validador, sizeof(validador), stdin);
+        if (sscanf(validador, "%d", &escolha) != 1)
+            {
+                escolha = 0;
+            }
         switch (escolha)
         {
         case 1 :
@@ -117,6 +121,7 @@ int menu()
             break;
         case 2 :
             printf("voce escolheu 2\n");
+            cadastrarLivro();
             break;
         case 3 :
             printf("voce escolheu 3\n");
@@ -134,8 +139,8 @@ int menu()
             printf("voce escolheu 7\n");
             break;
         case 8 :
-            printf("voce escolheu 8\n");
-            return 0;
+            printf("Saindo.....\n");
+            return;
         default:
             printf("Valor Invalido\n");
             break;
@@ -144,28 +149,8 @@ int menu()
     }
 }
 
-
-void testeLivros()
-{
-    for(int i = 0; i < QTD_MAXIMA_DE_REGISTROS; i++){
-        printf("livro %d\n", i + 1);
-        printf("codigo %d\n\n", livros[i].codigo);
-    }
+void cadastrarLivro(){
+    system("cls");
+    printf("===== Cadrastrando Livro =====\n bota as informacao do livro ae doido\n");
 }
 
-void testeUsuarios()
-{
-    for(int i = 0; i < QTD_MAXIMA_DE_REGISTROS; i++){
-        printf("usuario %d\n", i + 1);
-        printf("matricula %d\n\n", usuarios[i].matricula);
-    }
-}
-
-void testeEmprestimos()
-{
-    for(int i = 0; i < QTD_MAXIMA_DE_REGISTROS; i++){
-        printf("emprestimo %d\n", i + 1);
-        printf("matricula %d\n", emprestimos[i].codigo);
-        printf("teste %s\n", emprestimos[i].status);
-    }
-}
