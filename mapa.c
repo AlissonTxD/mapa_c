@@ -28,7 +28,9 @@ struct Emprestimo
 {
     int codigo;
     int matricula_usuario;
+    char nome_completo_usuario[100];
     int codigo_livro;
+    char titulo_livro[50];
     char data_emprestimo[20];
     char data_devolucao[20];
     char status[15];
@@ -44,9 +46,11 @@ void inicializarEmprestimos();
 void menu();
 void cadastrarLivro();
 void cadastrarUsuario();
+void cadastrarEmprestimo();
 void validarEntradaInteira(char *entrada, int *var_final);
 void listarLivros();
 void listarUsuarios();
+void listarEmprestimos();
 
 int main()
 {
@@ -88,7 +92,9 @@ void inicializarEmprestimos()
     for(int i = 0; i < QTD_MAXIMA_DE_REGISTROS; i++){
         emprestimos[i].codigo = 0;
         emprestimos[i].matricula_usuario = 0;
+        strcpy(emprestimos[i].nome_completo_usuario,"");
         emprestimos[i].codigo_livro = 0;
+        strcpy(emprestimos[i].titulo_livro,"");
         strcpy(emprestimos[i].data_emprestimo,"");
         strcpy(emprestimos[i].data_devolucao,"");
         strcpy(emprestimos[i].status,"");
@@ -128,6 +134,7 @@ void menu()
             break;
         case 3 :
             //Registrar Emprestimo
+            cadastrarEmprestimo();
             break;
         case 4 :
             //Registrar Devolucao
@@ -142,6 +149,7 @@ void menu()
             break;
         case 7 :
             //Listar Emprestimos
+            listarEmprestimos();
             break;
         case 8 :
             //Sair
@@ -163,7 +171,8 @@ void validarEntradaInteira(char *entrada, int *var_final)
     return;
 }
 
-void cadastrarLivro(){
+void cadastrarLivro()
+{
     system("cls");
     int vazio = -1;
     struct Livro livro_entrada;   
@@ -214,7 +223,7 @@ void cadastrarLivro(){
     printf("Quantidade de exemplares: ");
     fgets(entrada, sizeof(entrada), stdin);
     validarEntradaInteira(entrada, &exemplares);
-    if (exemplares <= 0){
+    if (exemplares < 0){
         printf("Quantidade invalida!\n");
         return;
     }
@@ -225,7 +234,8 @@ void cadastrarLivro(){
     printf("Livro cadastrado com sucesso.\n");
 }
 
-void listarLivros(){
+void listarLivros()
+{
     system("cls");
     printf("===== Lista de Livros Cadastrados =====\n");
     for(int i = 0; i < QTD_MAXIMA_DE_REGISTROS; i++){
@@ -242,7 +252,8 @@ void listarLivros(){
     }
 }
 
-void cadastrarUsuario(){
+void cadastrarUsuario()
+{
     system("cls");
     printf("===== Cadastrando Usuario =====\n");
     int vazio = -1;
@@ -286,9 +297,9 @@ void cadastrarUsuario(){
     printf("Usuario cadastrado com sucesso.\n");
 }
 
-void listarUsuarios(){
-    system("cls");
-    printf("(67) 99999-9999\n");
+void listarUsuarios()
+{
+    system("cls");  
     printf("===== Lista de Usuarios Cadastrados =====\n");
     for(int i = 0; i < QTD_MAXIMA_DE_REGISTROS; i++){
         if(usuarios[i].matricula != 0){
@@ -297,6 +308,107 @@ void listarUsuarios(){
             printf("Curso: %s", usuarios[i].curso);
             printf("Telefone: %s", usuarios[i].telefone);
             printf("Data de Cadastro: %s\n", usuarios[i].data_cadastro);
+            printf("-------------------------------\n");
+        }
+    }
+}
+
+void cadastrarEmprestimo()
+{
+    system("cls");
+    int vazio = -1;
+    struct Emprestimo emprestimo_entrada;   
+    printf("===== Registrando Emprestimo =====\n");
+    for(int i = 0; i < QTD_MAXIMA_DE_REGISTROS; i++){
+        if(emprestimos[i].codigo == 0){
+            vazio = i;
+            break;
+        }
+    }
+    if(vazio == -1){
+        printf("Limite de registro de emprestimos atingido!\n");
+        return;
+    }
+    char entrada[50];
+    emprestimo_entrada.codigo = vazio + 1;
+    int matricula;
+    int achou = 0;
+    int achado = -1;
+    printf("Matricula do usuario: ");
+    fgets(entrada, sizeof(entrada), stdin); 
+    validarEntradaInteira(entrada, &matricula);
+    if(matricula <= 0){
+        printf("Matricula invalida!\n");
+        return;
+    }
+    for(int i = 0; i < QTD_MAXIMA_DE_REGISTROS; i++){
+        if(usuarios[i].matricula == matricula){
+            achou = 1;
+            achado = i;
+            break;
+        }
+    }
+    if(achou == 0){
+        printf("Usuario nao cadastrado!\n");
+        return;
+    }else{
+        emprestimo_entrada.matricula_usuario = matricula;
+        strcpy(emprestimo_entrada.nome_completo_usuario, usuarios[achado].nome_completo);
+        printf("Nome do Usuario: %s", emprestimo_entrada.nome_completo_usuario);
+        achou = 0;
+        achado = -1;
+    }
+    int codigo_livro;
+    printf("Codigo do livro: ");
+    fgets(entrada, sizeof(entrada), stdin);
+    validarEntradaInteira(entrada, &codigo_livro);
+    if(codigo_livro <= 0){
+        printf("Codigo invalido!\n");
+        return;
+    }
+    int loc_livro = -1;
+    for(int i = 0; i < QTD_MAXIMA_DE_REGISTROS; i++){
+        if(livros[i].codigo == codigo_livro){
+            achou = 1;
+            loc_livro = i;
+            break;
+        }
+    }
+    if(achou == 0){
+        printf("Livro nao cadastrado!\n");
+        return;
+    }else{
+        emprestimo_entrada.codigo_livro = codigo_livro;
+        strcpy(emprestimo_entrada.titulo_livro, livros[loc_livro].titulo);
+        printf("Titulo do Livro: %s", emprestimo_entrada.titulo_livro);
+        achou = 0;
+    }
+    if(livros[loc_livro].exemplares <= 0){
+        printf("Nao ha exemplares disponiveis para emprestimo!\n");
+        return;
+    }
+    printf("Data do emprestimo (DD/MM/AAAA): ");
+    fgets(emprestimo_entrada.data_emprestimo, sizeof(emprestimo_entrada.data_emprestimo), stdin);
+    printf("Data da devolucao (DD/MM/AAAA): ");
+    fgets(emprestimo_entrada.data_devolucao, sizeof(emprestimo_entrada.data_devolucao), stdin);
+    strcpy(emprestimo_entrada.status, "emprestado");
+    emprestimos[vazio] = emprestimo_entrada;
+    livros[loc_livro].exemplares -= 1;
+    printf("Emprestimo registrado com sucesso.\n");
+}
+
+void listarEmprestimos()
+{
+    system("cls");
+    printf("===== Lista de Emprestimos Registrados =====\n");
+    for(int i = 0; i < QTD_MAXIMA_DE_REGISTROS; i++){
+        if(emprestimos[i].codigo != 0){
+            printf("Codigo do Emprestimo: %d\n", emprestimos[i].codigo);
+            printf("Matricula do Usuario: %d\n", emprestimos[i].matricula_usuario);
+            printf("Codigo do Livro: %d\n", emprestimos[i].codigo_livro);
+            printf("Data do Emprestimo: %s", emprestimos[i].data_emprestimo);
+            printf("Data da Devolucao: %s", emprestimos[i].data_devolucao);
+            printf("Status: %s\n", emprestimos[i].status);
             printf("-------------------------------\n");
         }
     }
