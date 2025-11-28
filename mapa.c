@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <ctype.h>
+#include <time.h>
 
 #define QTD_MAXIMA_DE_REGISTROS 5
-
+// structs
 struct Livro
 {
     int codigo;
@@ -36,10 +38,12 @@ struct Emprestimo
     char status[15];
 };
 
+// structs globais
 struct Livro livros[QTD_MAXIMA_DE_REGISTROS];
 struct Usuario usuarios[QTD_MAXIMA_DE_REGISTROS];
 struct Emprestimo emprestimos[QTD_MAXIMA_DE_REGISTROS];
 
+// prototipos
 void inicializarLivros();
 void inicializarUsuarios();
 void inicializarEmprestimos();
@@ -51,7 +55,10 @@ void validarEntradaInteira(char *entrada, int *var_final);
 void listarLivros();
 void listarUsuarios();
 void listarEmprestimos();
+void validarFormatoData(char *entrada);
+void calcularDevolucao(char *emprestimo, char *devolucao);
 
+// main
 int main()
 {
     inicializarLivros();
@@ -101,6 +108,7 @@ void inicializarEmprestimos()
     }
 }
 
+//menu
 void menu()
 {   
     while (1)
@@ -162,6 +170,7 @@ void menu()
     }
 }
 
+// validadores
 void validarEntradaInteira(char *entrada, int *var_final)
 {
     if (sscanf(entrada, "%d", var_final) != 1)
@@ -171,6 +180,55 @@ void validarEntradaInteira(char *entrada, int *var_final)
     return;
 }
 
+void validarFormatoData(char *entrada)
+{
+    if (
+        // tamanho errado
+        strlen(entrada) != 10 ||
+
+        // barras nas posições erradas
+        entrada[2] != '/' ||
+        entrada[5] != '/' ||
+
+        // caracteres que deveriam ser dígitos
+        !isdigit(entrada[0]) ||
+        !isdigit(entrada[1]) ||
+        !isdigit(entrada[3]) ||
+        !isdigit(entrada[4]) ||
+        !isdigit(entrada[6]) ||
+        !isdigit(entrada[7]) ||
+        !isdigit(entrada[8]) ||
+        !isdigit(entrada[9])
+       )
+    {
+        strcpy(entrada, "invalido");
+    }
+}
+
+void calcularDevolucao(char *emprestimo, char *devolucao)
+{
+    struct tm dataentrada = {0};
+    struct tm datadevolucao = {0};
+    
+    sscanf(emprestimo, "%d/%d/%d",
+          &dataentrada.tm_mday,
+          &dataentrada.tm_mon,
+          &dataentrada.tm_year);
+
+    dataentrada.tm_mon -= 1;
+    dataentrada.tm_year -= 1900;
+    mktime(&dataentrada);
+    datadevolucao = dataentrada;
+    datadevolucao.tm_mday += 7;
+    mktime(&datadevolucao);
+    sprintf(devolucao, "%02d/%02d/%04d",
+            datadevolucao.tm_mday,
+            datadevolucao.tm_mon + 1,
+            datadevolucao.tm_year + 1900);
+    return;
+}
+
+// funcionalidades
 void cadastrarLivro()
 {
     system("cls");
@@ -293,6 +351,12 @@ void cadastrarUsuario()
     fgets(usuario_entrada.telefone, sizeof(usuario_entrada.telefone), stdin);
     printf("Data de cadastro (DD/MM/AAAA): ");
     fgets(usuario_entrada.data_cadastro, sizeof(usuario_entrada.data_cadastro), stdin);
+    usuario_entrada.data_cadastro[strcspn(usuario_entrada.data_cadastro, "\n")] = 0;
+    validarFormatoData(usuario_entrada.data_cadastro);
+    if(strcmp(usuario_entrada.data_cadastro, "invalido") == 0){
+        printf("Data de cadastro invalida!\n");
+        return;
+    }
     usuarios[vazio] = usuario_entrada;
     printf("Usuario cadastrado com sucesso.\n");
 }
@@ -334,6 +398,7 @@ void cadastrarEmprestimo()
     int matricula;
     int achou = 0;
     int achado = -1;
+    char devolucao[20];
     printf("Matricula do usuario: ");
     fgets(entrada, sizeof(entrada), stdin); 
     validarEntradaInteira(entrada, &matricula);
@@ -389,9 +454,16 @@ void cadastrarEmprestimo()
     }
     printf("Data do emprestimo (DD/MM/AAAA): ");
     fgets(emprestimo_entrada.data_emprestimo, sizeof(emprestimo_entrada.data_emprestimo), stdin);
-    printf("Data da devolucao (DD/MM/AAAA): ");
-    fgets(emprestimo_entrada.data_devolucao, sizeof(emprestimo_entrada.data_devolucao), stdin);
-    strcpy(emprestimo_entrada.status, "emprestado");
+    emprestimo_entrada.data_emprestimo[strcspn(emprestimo_entrada.data_emprestimo, "\n")] = 0;
+    validarFormatoData(emprestimo_entrada.data_emprestimo);
+    if(strcmp(emprestimo_entrada.data_emprestimo, "invalido") == 0){
+        printf("Data de emprestimo invalida!\n");
+        return;
+    }
+    calcularDevolucao(emprestimo_entrada.data_emprestimo, devolucao);
+    strcpy(emprestimo_entrada.data_devolucao, devolucao);
+    printf("Data prevista de devolucao: %s\n", emprestimo_entrada.data_devolucao);
+    strcpy(emprestimo_entrada.status, "Ativo");
     emprestimos[vazio] = emprestimo_entrada;
     livros[loc_livro].exemplares -= 1;
     printf("Emprestimo registrado com sucesso.\n");
