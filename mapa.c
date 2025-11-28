@@ -57,6 +57,10 @@ void listarUsuarios();
 void listarEmprestimos();
 void validarFormatoData(char *entrada);
 void calcularDevolucao(char *emprestimo, char *devolucao);
+void sub_menu_pesquisa_livro();
+void pesquisarLivroPorCodigo();
+void pesquisarLivroPorTitulo();
+void pesquisarLivroPorAutor();
 
 // main
 int main()
@@ -149,7 +153,7 @@ void menu()
             break;
         case 5 :
             //Pesquisar Livro
-            listarLivros();
+            sub_menu_pesquisa_livro();
             break;
         case 6 :
             //Pesquisar Usuario
@@ -167,6 +171,40 @@ void menu()
             break;
         }
         system("pause");
+    }
+}
+
+void sub_menu_pesquisa_livro()
+{
+    char validador[50];
+    int escolha = 0;
+    system("cls");
+    printf("===== Pesquisa de Livros =====\n");
+    printf("1. Pesquisar por Codigo\n");
+    printf("2. Pesquisar por Titulo\n");
+    printf("3. Pesquisar por Autor\n");
+    printf("4. Voltar ao Menu Principal\n");
+    printf("\nEscolha uma opcao: ");
+    //Validador de entrada
+    fgets(validador, sizeof(validador), stdin);
+    validarEntradaInteira(validador, &escolha);
+    switch (escolha)
+    {
+    case 1:
+        pesquisarLivroPorCodigo();
+        break;
+    case 2:
+        // Implementar pesquisa por titulo
+        pesquisarLivroPorTitulo();
+        break;
+    case 3:
+        pesquisarLivroPorAutor();
+        break;
+    case 4:
+        return;
+    default:
+        printf("Opcao invalida!\n");
+        break;
     }
 }
 
@@ -286,8 +324,11 @@ void cadastrarLivro()
         return;
     }
     livro_entrada.exemplares = exemplares;
-    printf("Status do livro: ");
-    fgets(livro_entrada.status, sizeof(livro_entrada.status), stdin);
+    if (exemplares > 0){
+        strcpy(livro_entrada.status, "disponivel");
+    } else {
+        strcpy(livro_entrada.status, "indisponivel");
+    }
     livros[vazio] = livro_entrada;
     printf("Livro cadastrado com sucesso.\n");
 }
@@ -307,6 +348,92 @@ void listarLivros()
             printf("Status: %s\n", livros[i].status);
             printf("-------------------------------\n");
         }
+    }
+}
+
+void pesquisarLivroPorCodigo()
+{
+    printf("===== Pesquisa de Livro por Codigo =====\n");
+    char entrada[50];
+    int codigo;
+    int achou = 0;
+    printf("Digite o codigo do livro: ");
+    fgets(entrada, sizeof(entrada), stdin);
+    validarEntradaInteira(entrada, &codigo);
+    if(codigo <= 0){
+        printf("Codigo invalido!\n");
+        return;
+    }
+    for(int i = 0; i < QTD_MAXIMA_DE_REGISTROS; i++){
+        if(livros[i].codigo == codigo){
+            achou = 1;
+            printf("-------------------------------\n");
+            printf("Codigo: %d\n", livros[i].codigo);
+            printf("Titulo: %s", livros[i].titulo);
+            printf("Autor: %s", livros[i].autor);
+            printf("Editora: %s", livros[i].editora);
+            printf("Ano de Publicacao: %d\n", livros[i].ano_de_publicao);
+            printf("Exemplares: %d\n", livros[i].exemplares);
+            printf("Status: %s\n", livros[i].status);
+            return;
+        }
+    }
+    if (!achou) {
+        printf("Livro nao encontrado.\n");
+    }
+}
+
+void pesquisarLivroPorTitulo()
+{
+    printf("===== Pesquisa de Livro por Titulo =====\n");
+    char entrada[100];
+    int achou = 0;
+    printf("Digite o titulo do livro ou parte do titulo: ");
+    fgets(entrada, sizeof(entrada), stdin);
+    entrada[strcspn(entrada, "\n")] = 0;
+    strcpy(entrada, strlwr(entrada));
+    for(int i = 0; i < QTD_MAXIMA_DE_REGISTROS; i++){
+        if(strstr(strlwr(livros[i].titulo), entrada) != NULL){
+            achou = 1;
+            printf("-------------------------------\n");
+            printf("Codigo: %d\n", livros[i].codigo);
+            printf("Titulo: %s", livros[i].titulo);
+            printf("Autor: %s", livros[i].autor);
+            printf("Editora: %s", livros[i].editora);
+            printf("Ano de Publicacao: %d\n", livros[i].ano_de_publicao);
+            printf("Exemplares: %d\n", livros[i].exemplares);
+            printf("Status: %s\n", livros[i].status);
+        }
+    }
+    if (!achou) {
+        printf("Livro nao encontrado.\n");
+    }
+}
+
+void pesquisarLivroPorAutor()
+{
+    printf("===== Pesquisa de Livro por Autor =====\n");
+    char entrada[80];
+    int achou = 0;
+    printf("Digite o nome do autor ou parte do nome: ");
+    fgets(entrada, sizeof(entrada), stdin);
+    entrada[strcspn(entrada, "\n")] = 0;
+    strcpy(entrada, strlwr(entrada));
+    for(int i = 0; i < QTD_MAXIMA_DE_REGISTROS; i++){
+        if(strstr(strlwr(livros[i].autor), entrada) != NULL){
+            achou = 1;
+            printf("-------------------------------\n");
+            printf("Codigo: %d\n", livros[i].codigo);
+            printf("Titulo: %s", livros[i].titulo);
+            printf("Autor: %s", livros[i].autor);
+            printf("Editora: %s", livros[i].editora);
+            printf("Ano de Publicacao: %d\n", livros[i].ano_de_publicao);
+            printf("Exemplares: %d\n", livros[i].exemplares);
+            printf("Status: %s\n", livros[i].status);
+        }
+    }
+    if (!achou) {
+        printf("Livro nao encontrado.\n");
     }
 }
 
@@ -473,8 +600,10 @@ void listarEmprestimos()
 {
     system("cls");
     printf("===== Lista de Emprestimos Registrados =====\n");
+    int achou = 0;
     for(int i = 0; i < QTD_MAXIMA_DE_REGISTROS; i++){
         if(emprestimos[i].codigo != 0){
+            achou = 1;
             printf("Codigo do Emprestimo: %d\n", emprestimos[i].codigo);
             printf("Matricula do Usuario: %d\n", emprestimos[i].matricula_usuario);
             printf("Codigo do Livro: %d\n", emprestimos[i].codigo_livro);
@@ -483,5 +612,8 @@ void listarEmprestimos()
             printf("Status: %s\n", emprestimos[i].status);
             printf("-------------------------------\n");
         }
+    }
+    if(achou == 0){
+        printf("Nenhum emprestimo registrado.\n");
     }
 }
